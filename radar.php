@@ -28,7 +28,7 @@ $user_set_array['db_name'] = 'adsb'; $user_set_array['db_host'] = '127.0.0.1'; $
 $user_set_array['url_json'] = 'http://127.0.0.1/dump1090/data/aircraft.json';
 
 // set path to your mailer.php file
-$user_set_array['url_mailer'] = 'http://127.0.0.1/mailer.php';
+$user_set_array['url_mailer'] = 'http://MyWebSpace.com/mailer.php';
 
 // set a key (letters/numbers only) according to mailer.php
 $user_set_array['secret_email_key'] = 'YOUR_USER_KEY';
@@ -43,8 +43,8 @@ $user_set_array['aircraft_suspend_time'] = 900;
 $user_set_array['filter_mode_alert'] = false;    $user_set_array['filter_mode_database'] = false;
 
 // set path to your hex_code_array.txt and flight_code_array.txt files
-$user_set_array['hex_file_path'] = 'hex_code_array.txt';
-$user_set_array['flight_file_path'] = 'flight_code_array.txt';
+$user_set_array['hex_file_path'] = '/home/pi/hex_code_array.txt';
+$user_set_array['flight_file_path'] = '/home/pi/flight_code_array.txt';
 
 // set your timezone see http://php.net/manual/en/timezones.php
 $user_set_array['time_zone'] = 'America/Chicago';
