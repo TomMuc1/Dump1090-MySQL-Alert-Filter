@@ -8,10 +8,15 @@ writes Dump1090-mutability data to database and e-mail alerts on special events.
 given raspbian jessie install with dump1090-mutability with lighttpd
 
 sudo apt-get update
+
 sudo apt-get install php5-common php5-cgi php5-mysql php5-sqlite php5
+
 sudo lighty-enable-mod fastcgi
+
 sudo lighty-enable-mod fastcgi-php
+
 sudo service lighttpd force-reload
+
 sudo apt-get install mysql-server mysql-client
 
 sudo shutdown -r now
