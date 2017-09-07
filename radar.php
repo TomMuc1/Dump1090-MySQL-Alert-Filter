@@ -112,7 +112,7 @@ while (true) {
 
 		// set and modify alert-trigger-array and build alert-message optionally according only to hex or flight numbers in hex_code_array.txt and flight_code_array.txt
 		if ($user_set_array['filter_mode_alert']) {
-			if (($ac_altitude < $user_set_array['alert_max_alt'] and $ac_lat < $user_set_array['alert_max_lat'] and $ac_lat > $user_set_array['alert_min_lat'] and $ac_lon < $user_set_array['alert_max_lon'] and $ac_lon > $user_set_array['alert_min_lon']) and (in_array($ac_hex, $hex_code_array) or ($ac_flight != '') and (in_array($ac_flight, $flight_code_array)))) {
+			if (($ac_altitude != '' and $ac_altitude < $user_set_array['alert_max_alt'] and $ac_lat < $user_set_array['alert_max_lat'] and $ac_lat > $user_set_array['alert_min_lat'] and $ac_lon < $user_set_array['alert_max_lon'] and $ac_lon > $user_set_array['alert_min_lon']) and (in_array($ac_hex, $hex_code_array) or ($ac_flight != '') and (in_array($ac_flight, $flight_code_array)))) {
 				if (!array_key_exists($ac_hex, $alert_trigger_array)) {
 					$alert_message_subject = urlencode('### STRAFER-ALERT ### ' . $ac_flight  . ' ' . $ac_hex . ' : ' . $ac_lat . ' ' . $ac_lon . ' : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
 					$alert_message_body = urlencode($ac_flight  . ' ' . $ac_hex . ' : <a href="http://www.google.com/maps/place/' . $ac_lat . ',' . $ac_lon . '/@' . $ac_lat . ',' . $ac_lon . ',12z">' . $ac_lat . ' ' . $ac_lon . '</a> : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
@@ -124,7 +124,7 @@ while (true) {
 				}
 			}
         } else {
-			if ($ac_altitude < $user_set_array['alert_max_alt'] and $ac_lat < $user_set_array['alert_max_lat'] and $ac_lat > $user_set_array['alert_min_lat'] and $ac_lon < $user_set_array['alert_max_lon'] and $ac_lon > $user_set_array['alert_min_lon']) {
+			if ($ac_altitude != '' and $ac_altitude < $user_set_array['alert_max_alt'] and $ac_lat < $user_set_array['alert_max_lat'] and $ac_lat > $user_set_array['alert_min_lat'] and $ac_lon < $user_set_array['alert_max_lon'] and $ac_lon > $user_set_array['alert_min_lon']) {
 				if (!array_key_exists($ac_hex, $alert_trigger_array)) {
 					$alert_message_subject = urlencode('### STRAFER-ALERT ### ' . $ac_flight  . ' ' . $ac_hex . ' : ' . $ac_lat . ' ' . $ac_lon . ' : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
 					$alert_message_body = urlencode($ac_flight  . ' ' . $ac_hex . ' : <a href="http://www.google.com/maps/place/' . $ac_lat . ',' . $ac_lon . '/@' . $ac_lat . ',' . $ac_lon . ',12z">' . $ac_lat . ' ' . $ac_lon . '</a> : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
