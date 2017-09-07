@@ -3,6 +3,8 @@ a simple php script that makes use of Dump1090-mutability aircraft.json and filt
 
 writes Dump1090-mutability data to database and e-mail alerts on special events. you can set how often the script writes to database and looks for alert condition. you can specify the area (lat/lon/alt) to be observed and filter for special hex and/or flight numbers.
 
+![Alt text](/relative/path/to/img.jpg?raw=true "Optional Title")
+
 ** 5 Minute Express Install HowTo **
 
 given raspbian jessie install with dump1090-mutability with lighttpd
