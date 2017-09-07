@@ -7,7 +7,7 @@ It writes Dump1090-mutability data to database and e-mail alerts on special even
 
 *** 5 Minute Express Install HowTo ***
 
-given raspbian jessie install with dump1090-mutability with lighttpd
+given a raspbian jessie install with dump1090-mutability and lighttpd on raspberry-pi:
 
 sudo apt-get update
 
