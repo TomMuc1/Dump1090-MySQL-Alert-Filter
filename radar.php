@@ -60,14 +60,14 @@ date_default_timezone_set($user_set_array['time_zone']);
 
 while (true) {
 
-	$x = 0;
-	$sql = '';
-	$start_loop_microtime = microtime(true);
-	$json_data_array = json_decode(file_get_contents($user_set_array['url_json']),true);
-	if ($user_set_array['filter_mode_alert'] or $user_set_array['filter_mode_database']) {
-		$hex_code_array = explode(', ', file_get_contents($user_set_array['hex_file_path']));
-		$flight_code_array = explode(', ', file_get_contents($user_set_array['flight_file_path']));
-	}
+    $x = 0;
+    $sql = '';
+    $start_loop_microtime = microtime(true);
+    $json_data_array = json_decode(file_get_contents($user_set_array['url_json']),true);
+    if ($user_set_array['filter_mode_alert'] || $user_set_array['filter_mode_database']) {
+        $hex_code_array = explode(', ', file_get_contents($user_set_array['hex_file_path']));
+        $flight_code_array = explode(', ', file_get_contents($user_set_array['flight_file_path']));
+    }
 
 	// loop through aircraft.json file
 	foreach ($json_data_array['aircraft'] as $row) {
@@ -92,8 +92,8 @@ while (true) {
 
 		// generate sql insert statement per aircraft in range of user set altitude/latitude/longitude and optionally according only to hex or flight numbers in hex_code_array.txt and flight_code_array.txt
 		#var_dump($hex_code_array); var_dump($flight_code_array); // show arrays for debug
-		if ($user_set_array['filter_mode_database']) {
-			if (($ac_altitude != '' and $ac_altitude < $user_set_array['max_alt'] and $ac_lat < $user_set_array['max_lat'] and $ac_lat > $user_set_array['min_lat'] and $ac_lon < $user_set_array['max_lon'] and $ac_lon > $user_set_array['min_lon']) and (in_array($ac_hex, $hex_code_array) or ($ac_flight != '') and (in_array($ac_flight, $flight_code_array)))) {
+        if ($user_set_array['filter_mode_database']) {
+			if (($ac_altitude != '' && $ac_altitude < $user_set_array['max_alt'] && $ac_lat < $user_set_array['max_lat'] && $ac_lat > $user_set_array['min_lat'] && $ac_lon < $user_set_array['max_lon'] && $ac_lon > $user_set_array['min_lon']) && (in_array($ac_hex, $hex_code_array) || ($ac_flight != '') && (in_array($ac_flight, $flight_code_array)))) {
 				$sql .= "INSERT INTO aircrafts VALUES (NULL, '" . date("Y-m-d G:i:s l", $ac_now) . "', '$ac_now', '$ac_hex', '$ac_flight', ";
 				$sql .= "'$ac_altitude', '$ac_lat', '$ac_lon', '$ac_track', '$ac_speed', '$ac_vert_rate', '$ac_seen_pos', '$ac_seen', ";
 				$sql .= "'$ac_rssi', '$ac_messages', '$ac_category', '$ac_squawk', '$ac_nucp', '$ac_mlat', '$ac_tisb');";
@@ -101,7 +101,7 @@ while (true) {
 				$x++;
 			}
 		} else {
-			if ($ac_altitude != '' and $ac_altitude < $user_set_array['max_alt'] and $ac_lat < $user_set_array['max_lat'] and $ac_lat > $user_set_array['min_lat'] and $ac_lon < $user_set_array['max_lon'] and $ac_lon > $user_set_array['min_lon']) {
+			if ($ac_altitude != '' && $ac_altitude < $user_set_array['max_alt'] && $ac_lat < $user_set_array['max_lat'] && $ac_lat > $user_set_array['min_lat'] && $ac_lon < $user_set_array['max_lon'] && $ac_lon > $user_set_array['min_lon']) {
 				$sql .= "INSERT INTO aircrafts VALUES (NULL, '" . date("Y-m-d G:i:s l", $ac_now) . "', '$ac_now', '$ac_hex', '$ac_flight', ";
 				$sql .= "'$ac_altitude', '$ac_lat', '$ac_lon', '$ac_track', '$ac_speed', '$ac_vert_rate', '$ac_seen_pos', '$ac_seen', ";
 				$sql .= "'$ac_rssi', '$ac_messages', '$ac_category', '$ac_squawk', '$ac_nucp', '$ac_mlat', '$ac_tisb');";
@@ -112,10 +112,10 @@ while (true) {
 
 		// set and modify alert-trigger-array and build alert-message optionally according only to hex or flight numbers in hex_code_array.txt and flight_code_array.txt
 		if ($user_set_array['filter_mode_alert']) {
-			if (($ac_altitude != '' and $ac_altitude < $user_set_array['alert_max_alt'] and $ac_lat < $user_set_array['alert_max_lat'] and $ac_lat > $user_set_array['alert_min_lat'] and $ac_lon < $user_set_array['alert_max_lon'] and $ac_lon > $user_set_array['alert_min_lon']) and (in_array($ac_hex, $hex_code_array) or ($ac_flight != '') and (in_array($ac_flight, $flight_code_array)))) {
+			if (($ac_altitude != '' && $ac_altitude < $user_set_array['alert_max_alt'] && $ac_lat < $user_set_array['alert_max_lat'] && $ac_lat > $user_set_array['alert_min_lat'] && $ac_lon < $user_set_array['alert_max_lon'] && $ac_lon > $user_set_array['alert_min_lon']) && (in_array($ac_hex, $hex_code_array) || ($ac_flight != '') && (in_array($ac_flight, $flight_code_array)))) {
 				if (!array_key_exists($ac_hex, $alert_trigger_array)) {
-					$alert_message_subject = urlencode('### STRAFER-ALERT ### ' . $ac_flight  . ' ' . $ac_hex . ' : ' . $ac_lat . ' ' . $ac_lon . ' : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
-					$alert_message_body = urlencode($ac_flight  . ' ' . $ac_hex . ' : <a href="http://www.google.com/maps/place/' . $ac_lat . ',' . $ac_lon . '/@' . $ac_lat . ',' . $ac_lon . ',12z">' . $ac_lat . ' ' . $ac_lon . '</a> : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
+					$alert_message_subject = urlencode('### STRAFER-ALERT ### ' . $ac_flight  . ' ' . $ac_hex . ' : ' . $ac_lat . ' ' . $ac_lon . ' : ' . ($ac_altitude * 0.3048) . 'm @ ' . date('Y-m-d G:i:s l', $ac_now));
+					$alert_message_body = urlencode($ac_flight  . ' ' . $ac_hex . ' : <a href="http://www.google.com/maps/place/' . $ac_lat . ',' . $ac_lon . '/@' . $ac_lat . ',' . $ac_lon . ',12z">' . $ac_lat . ' ' . $ac_lon . '</a> : ' . ($ac_altitude * 0.3048) . 'm @ ' . date('Y-m-d G:i:s l', $ac_now));
 					$alert_message = 'key=' . $user_set_array['secret_email_key'] . '&subject=' . $alert_message_subject . '&body=' . $alert_message_body;
 					if ($ac_hex) {
 						$alert_trigger_array[$ac_hex] = time();
@@ -123,17 +123,17 @@ while (true) {
 					}
 				}
 			}
-		} else {
-			if ($ac_altitude != '' and $ac_altitude < $user_set_array['alert_max_alt'] and $ac_lat < $user_set_array['alert_max_lat'] and $ac_lat > $user_set_array['alert_min_lat'] and $ac_lon < $user_set_array['alert_max_lon'] and $ac_lon > $user_set_array['alert_min_lon']) {
+        } else {
+			if ($ac_altitude != '' && $ac_altitude < $user_set_array['alert_max_alt'] && $ac_lat < $user_set_array['alert_max_lat'] && $ac_lat > $user_set_array['alert_min_lat'] && $ac_lon < $user_set_array['alert_max_lon'] && $ac_lon > $user_set_array['alert_min_lon']) {
 				if (!array_key_exists($ac_hex, $alert_trigger_array)) {
-					$alert_message_subject = urlencode('### STRAFER-ALERT ### ' . $ac_flight  . ' ' . $ac_hex . ' : ' . $ac_lat . ' ' . $ac_lon . ' : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
-					$alert_message_body = urlencode($ac_flight  . ' ' . $ac_hex . ' : <a href="http://www.google.com/maps/place/' . $ac_lat . ',' . $ac_lon . '/@' . $ac_lat . ',' . $ac_lon . ',12z">' . $ac_lat . ' ' . $ac_lon . '</a> : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
+					$alert_message_subject = urlencode('### STRAFER-ALERT ### ' . $ac_flight  . ' ' . $ac_hex . ' : ' . $ac_lat . ' ' . $ac_lon . ' : ' . ($ac_altitude * 0.3048) . 'm @ ' . date('Y-m-d G:i:s l', $ac_now));
+					$alert_message_body = urlencode($ac_flight  . ' ' . $ac_hex . ' : <a href="http://www.google.com/maps/place/' . $ac_lat . ',' . $ac_lon . '/@' . $ac_lat . ',' . $ac_lon . ',12z">' . $ac_lat . ' ' . $ac_lon . '</a> : ' . ($ac_altitude * 0.3048) . 'm @ ' . date('Y-m-d G:i:s l', $ac_now));
 					$alert_message = 'key=' . $user_set_array['secret_email_key'] . '&subject=' . $alert_message_subject . '&body=' . $alert_message_body;
 					if ($ac_hex) {
 						$alert_trigger_array[$ac_hex] = time();
 						#var_dump($alert_trigger_array); // show array for debug
 					}
-				}
+			    }
 			}
 		}
 
@@ -146,17 +146,17 @@ while (true) {
 		}
 
 		// send alert-message, set absolute limit for maximum number of messages and reset alert-message
-		if ($alert_message != '' and $sent_alert_messages < $user_set_array['mailer_limit']) {
-			if ($user_set_array['gmail']) {
-				$email = $user_set_array['email_address'];
+		if ($alert_message != '' && $sent_alert_messages < $user_set_array['mailer_limit']) {
+		    if ($user_set_array['gmail']) {
+                $email = $user_set_array['email_address'];
 				$header  = 'MIME-Version: 1.0' . PHP_EOL;
 				$header .= 'Content-type: text/html; charset=iso-8859-1' . PHP_EOL;
 				$header .= 'From: ' . $user_set_array['email_address'] . PHP_EOL;
 				$header .= 'Reply-To: ' . $user_set_array['email_address'] . PHP_EOL;
 				$header .= 'X-Mailer: PHP ' . phpversion();
 				mail($user_set_array['email_address'], urldecode($alert_message_subject), urldecode($alert_message_body), $header);
-			} else {
-				file_get_contents($user_set_array['url_mailer'] . '?' . $alert_message);
+            } else {
+			    file_get_contents($user_set_array['url_mailer'] . '?' . $alert_message);
 			}
 			$sent_alert_messages++;
 			$alert_message = '';
