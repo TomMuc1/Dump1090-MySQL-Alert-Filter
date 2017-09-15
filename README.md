@@ -11,7 +11,9 @@ given a raspbian jessie install with dump1090-mutability and lighttpd on raspber
 
 sudo apt-get update
 
-sudo apt-get install php5-common php5-cgi php5-mysql php5-sqlite php5
+sudo apt-get install sendmail
+
+sudo apt-get install php5-common php5-cgi php5-mysql php5-sqlite php5-curl php5
 
 sudo lighty-enable-mod fastcgi
 
