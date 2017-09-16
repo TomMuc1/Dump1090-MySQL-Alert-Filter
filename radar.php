@@ -39,8 +39,10 @@ $user_set_array['mailer_limit'] = 1000;
 // set aircraft suspend time (default is 900) - change only if needed - time in seconds an aicraft is suspended from alert-messages after sending an alert-message for this aircraft
 $user_set_array['aircraft_suspend_time'] = 900;
 
-// set this to true if you want alerts and/or database writes from those aircrafts matching your hex_code_array.txt or flight_code_array.txt files within limited area or whole site-range
-$user_set_array['filter_mode_alert'] = false;    $user_set_array['filter_mode_alert_limited'] = false;    $user_set_array['filter_mode_database'] = false;     $user_set_array['filter_mode_database_limited'] = false;
+// set this to true if you want alerts and/or database writes from those aircrafts matching your hex_code_array.txt or flight_code_array.txt files within limited area or whole site-range, with or without wildcards
+$user_set_array['filter_mode_alert'] = false;    $user_set_array['filter_mode_alert_limited'] = false;
+$user_set_array['filter_mode_database'] = false;     $user_set_array['filter_mode_database_limited'] = false;
+$user_set_array['filter_mode_wildcard'] = false;
 
 // set path to your hex_code_array.txt and flight_code_array.txt files
 $user_set_array['hex_file_path'] = '/home/pi/hex_code_array.txt';
@@ -51,12 +53,17 @@ $user_set_array['time_zone'] = 'America/Chicago';
 
 
 
-function func_wildcard_search($needle, $haystack) {
-	$match = false;
-	foreach ($haystack as $pattern) {
-		if (preg_match('/^' . trim($pattern) . '$/', strtoupper($needle))) $match = true;
+
+function func_wildcard_search($code, $user_code_array, $wildcard_mode) {
+    $match = false;
+    if ($wildcard_mode) {
+		foreach ($user_code_array as $pattern) {
+			if (preg_match('/^' . trim($pattern) . '$/', strtoupper($code))) $match = true;
+		}
+	    return $match;
+	} else {
+	    if (in_array($code, $user_code_array)) return $match;
 	}
-	return $match;
 }
 
 $i = 0;
@@ -101,7 +108,7 @@ while (true) {
 		// generate sql insert statement per aircraft in range of user set altitude/latitude/longitude and optionally according only to hex or flight numbers in hex_code_array.txt and flight_code_array.txt
 		#var_dump($hex_code_array); var_dump($flight_code_array); // show arrays for debug
 		if ($user_set_array['filter_mode_database'] && $user_set_array['filter_mode_database_limited']) {
-			if (($ac_altitude != '' && $ac_altitude < $user_set_array['max_alt'] && $ac_lat < $user_set_array['max_lat'] && $ac_lat > $user_set_array['min_lat'] && $ac_lon < $user_set_array['max_lon'] && $ac_lon > $user_set_array['min_lon']) && (func_wildcard_search($ac_hex, $hex_code_array) || ($ac_flight != '' && func_wildcard_search($ac_flight, $flight_code_array)))) {
+			if (($ac_altitude != '' && $ac_altitude < $user_set_array['max_alt'] && $ac_lat < $user_set_array['max_lat'] && $ac_lat > $user_set_array['min_lat'] && $ac_lon < $user_set_array['max_lon'] && $ac_lon > $user_set_array['min_lon']) && (func_wildcard_search($ac_hex, $hex_code_array, $user_set_array['filter_mode_wildcard']) || ($ac_flight != '' && func_wildcard_search($ac_flight, $flight_code_array, $user_set_array['filter_mode_wildcard'])))) {
 				$sql .= "INSERT INTO aircrafts VALUES (NULL, '" . date("Y-m-d G:i:s l", $ac_now) . "', '$ac_now', '$ac_hex', '$ac_flight', ";
 				$sql .= "'$ac_altitude', '$ac_lat', '$ac_lon', '$ac_track', '$ac_speed', '$ac_vert_rate', '$ac_seen_pos', '$ac_seen', ";
 				$sql .= "'$ac_rssi', '$ac_messages', '$ac_category', '$ac_squawk', '$ac_nucp', '$ac_mlat', '$ac_tisb');";
@@ -109,7 +116,7 @@ while (true) {
 				$x++;
 			}
 		} elseif ($user_set_array['filter_mode_database']) {
-			if (($ac_altitude != '' && $ac_altitude < $user_set_array['max_alt'] && $ac_lat < $user_set_array['max_lat'] && $ac_lat > $user_set_array['min_lat'] && $ac_lon < $user_set_array['max_lon'] && $ac_lon > $user_set_array['min_lon']) || (func_wildcard_search($ac_hex, $hex_code_array) || ($ac_flight != '' && func_wildcard_search($ac_flight, $flight_code_array)))) {
+			if (($ac_altitude != '' && $ac_altitude < $user_set_array['max_alt'] && $ac_lat < $user_set_array['max_lat'] && $ac_lat > $user_set_array['min_lat'] && $ac_lon < $user_set_array['max_lon'] && $ac_lon > $user_set_array['min_lon']) || (func_wildcard_search($ac_hex, $hex_code_array, $user_set_array['filter_mode_wildcard']) || ($ac_flight != '' && func_wildcard_search($ac_flight, $flight_code_array, $user_set_array['filter_mode_wildcard'])))) {
 				$sql .= "INSERT INTO aircrafts VALUES (NULL, '" . date("Y-m-d G:i:s l", $ac_now) . "', '$ac_now', '$ac_hex', '$ac_flight', ";
 				$sql .= "'$ac_altitude', '$ac_lat', '$ac_lon', '$ac_track', '$ac_speed', '$ac_vert_rate', '$ac_seen_pos', '$ac_seen', ";
 				$sql .= "'$ac_rssi', '$ac_messages', '$ac_category', '$ac_squawk', '$ac_nucp', '$ac_mlat', '$ac_tisb');";
@@ -128,7 +135,7 @@ while (true) {
 
 		// set and modify alert-trigger-array and build alert-message optionally according only to hex or flight numbers in hex_code_array.txt and flight_code_array.txt
 		if ($user_set_array['filter_mode_alert'] && $user_set_array['filter_mode_alert_limited']) {
-			if (($ac_altitude != '' && $ac_altitude < $user_set_array['alert_max_alt'] && $ac_lat < $user_set_array['alert_max_lat'] && $ac_lat > $user_set_array['alert_min_lat'] && $ac_lon < $user_set_array['alert_max_lon'] && $ac_lon > $user_set_array['alert_min_lon']) && (func_wildcard_search($ac_hex, $hex_code_array) || ($ac_flight != '' && func_wildcard_search($ac_flight, $flight_code_array)))) {
+			if (($ac_altitude != '' && $ac_altitude < $user_set_array['alert_max_alt'] && $ac_lat < $user_set_array['alert_max_lat'] && $ac_lat > $user_set_array['alert_min_lat'] && $ac_lon < $user_set_array['alert_max_lon'] && $ac_lon > $user_set_array['alert_min_lon']) && (func_wildcard_search($ac_hex, $hex_code_array, $user_set_array['filter_mode_wildcard']) || ($ac_flight != '' && func_wildcard_search($ac_flight, $flight_code_array, $user_set_array['filter_mode_wildcard'])))) {
 				if (!array_key_exists($ac_hex, $alert_trigger_array)) {
 					$alert_message_subject = urlencode('### STRAFER-ALERT ### ' . $ac_flight  . ' ' . $ac_hex . ' : ' . $ac_lat . ' ' . $ac_lon . ' : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
 					$alert_message_body = urlencode($ac_flight  . ' ' . $ac_hex . ' : <a href="http://www.google.com/maps/place/' . $ac_lat . ',' . $ac_lon . '/@' . $ac_lat . ',' . $ac_lon . ',12z">' . $ac_lat . ' ' . $ac_lon . '</a> : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
@@ -140,7 +147,7 @@ while (true) {
 				}
 			}
 		} elseif ($user_set_array['filter_mode_alert']) {
-			if (($ac_altitude != '' && $ac_altitude < $user_set_array['alert_max_alt'] && $ac_lat < $user_set_array['alert_max_lat'] && $ac_lat > $user_set_array['alert_min_lat'] && $ac_lon < $user_set_array['alert_max_lon'] && $ac_lon > $user_set_array['alert_min_lon']) || (func_wildcard_search($ac_hex, $hex_code_array) || ($ac_flight != '' && func_wildcard_search($ac_flight, $flight_code_array)))) {
+			if (($ac_altitude != '' && $ac_altitude < $user_set_array['alert_max_alt'] && $ac_lat < $user_set_array['alert_max_lat'] && $ac_lat > $user_set_array['alert_min_lat'] && $ac_lon < $user_set_array['alert_max_lon'] && $ac_lon > $user_set_array['alert_min_lon']) || (func_wildcard_search($ac_hex, $hex_code_array, $user_set_array['filter_mode_wildcard']) || ($ac_flight != '' && func_wildcard_search($ac_flight, $flight_code_array, $user_set_array['filter_mode_wildcard'])))) {
 				if (!array_key_exists($ac_hex, $alert_trigger_array)) {
 					$alert_message_subject = urlencode('### STRAFER-ALERT ### ' . $ac_flight  . ' ' . $ac_hex . ' : ' . $ac_lat . ' ' . $ac_lon . ' : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
 					$alert_message_body = urlencode($ac_flight  . ' ' . $ac_hex . ' : <a href="http://www.google.com/maps/place/' . $ac_lat . ',' . $ac_lon . '/@' . $ac_lat . ',' . $ac_lon . ',12z">' . $ac_lat . ' ' . $ac_lon . '</a> : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
