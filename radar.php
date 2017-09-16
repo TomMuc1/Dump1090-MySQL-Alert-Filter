@@ -63,7 +63,7 @@ function func_wildcard_search($code, $user_code_array, $wildcard_mode) {
 	        return $match;
 	} else {
 	        if (in_array($code, $user_code_array)) return $match;
-	    }
+	}
 }
 
 $i = 0;
