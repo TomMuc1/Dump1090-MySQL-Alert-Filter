@@ -55,13 +55,13 @@ $user_set_array['time_zone'] = 'America/Chicago';
 
 
 function func_wildcard_search($code, $user_code_array, $wildcard_mode) {
-    $match = false;
-    if ($wildcard_mode) {
+        $match = false;
+        if ($wildcard_mode) {
 		foreach ($user_code_array as $pattern) {
 			if (preg_match('/^' . trim($pattern) . '$/', strtoupper($code))) $match = true;
 		}
 	} else {
-	    if (in_array($code, $user_code_array)) $match = true;
+	        if (in_array($code, $user_code_array)) $match = true;
 	}
 	return $match;
 }
