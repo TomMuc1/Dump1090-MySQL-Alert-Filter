@@ -58,11 +58,15 @@ function func_wildcard_search($code, $user_code_array, $wildcard_mode) {
     $match = false;
     if ($wildcard_mode) {
 		foreach ($user_code_array as $pattern) {
-			if (preg_match('/^' . trim($pattern) . '$/', strtoupper($code))) $match = true;
+			if (preg_match('/^' . trim($pattern) . '$/', strtoupper($code))) {
+			    $match = true;
+			}
 		}
 	    return $match;
 	} else {
-	    if (in_array($code, $user_code_array)) return $match;
+	    if (in_array($code, $user_code_array)) {
+	        return $match;
+	    }
 	}
 }
 
