@@ -61,8 +61,7 @@ function func_wildcard_search($code, $user_code_array, $wildcard_mode) {
 			if (preg_match('/^' . trim($pattern) . '$/', strtoupper($code))) {
 			    $match = true;
 			}
-		}
-	    return $match;
+		} return $match;
 	} else {
 	    if (in_array($code, $user_code_array)) {
 	        return $match;
