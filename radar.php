@@ -55,15 +55,15 @@ $user_set_array['time_zone'] = 'America/Chicago';
 
 
 function func_wildcard_search($code, $user_code_array, $wildcard_mode) {
-    $match = false;
-    $code = strtoupper($code);
-    if ($wildcard_mode) {
+        $match = false;
+        $code = strtoupper($code);
+        if ($wildcard_mode) {
 		foreach ($user_code_array as $pattern) {
 			if (preg_match('/^' . trim($pattern) . '$/', $code)) $match = true;
 		}
 	} else {
-	    $user_code_array = array_map('trim', $user_code_array);
-	    if (in_array($code, $user_code_array)) $match = true;
+	        $user_code_array = array_map('trim', $user_code_array);
+	        if (in_array($code, $user_code_array)) $match = true;
 	}
 	return $match;
 }
