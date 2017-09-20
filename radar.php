@@ -203,12 +203,12 @@ while (true) {
 
 // write selected aircraft data to database
 try {
-    $db = new PDO('mysql:host=' . $user_set_array['db_host'] . ';dbname=' . $user_set_array['db_name'] . '', $user_set_array['db_user'], $user_set_array['db_pass']); $db_insert = '';
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    if ($sql) { $db->exec($sql); $db_insert = 'inserted'; }
-    $db = null;
+        $db = new PDO('mysql:host=' . $user_set_array['db_host'] . ';dbname=' . $user_set_array['db_name'] . '', $user_set_array['db_user'], $user_set_array['db_pass']); $db_insert = '';
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        if ($sql) { $db->exec($sql); $db_insert = 'inserted'; }
+        $db = null;
 } catch (PDOException $db_error) {
-    $db_insert = 'db-error' . PHP_EOL . $db_error->getMessage();
+        $db_insert = 'db-error' . PHP_EOL . $db_error->getMessage();
 }
 
 // generate terminal output and set sleep timer to get minimum a full second until next aircraft.json is ready to get fetched
