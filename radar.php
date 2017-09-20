@@ -55,15 +55,15 @@ $user_set_array['time_zone'] = 'America/Chicago';
 
 
 function func_wildcard_search($code, $user_code_array, $wildcard_mode) {
-        $match = false;
-        $code = strtoupper($code);
-        if ($wildcard_mode) {
+	$match = false;
+	$code = strtoupper($code);
+	if ($wildcard_mode) {
 		foreach ($user_code_array as $pattern) {
 			if (preg_match('/^' . trim($pattern) . '$/', $code)) $match = true;
 		}
 	} else {
-	        $user_code_array = array_map('trim', $user_code_array);
-	        if (in_array($code, $user_code_array)) $match = true;
+		$user_code_array = array_map('trim', $user_code_array);
+		if (in_array($code, $user_code_array)) $match = true;
 	}
 	return $match;
 }
@@ -202,9 +202,14 @@ while (true) {
 	}
 
 // write selected aircraft data to database
-$db = new PDO('mysql:host=' . $user_set_array['db_host'] . ';dbname=' . $user_set_array['db_name'] . '', $user_set_array['db_user'], $user_set_array['db_pass']); $db_insert = '';
-if ($sql) { $db->exec($sql); $db->lastInsertId() ? $db_insert = 'inserted' : $db_insert = 'db-error'; }
-$db = null;
+try {
+    $db = new PDO('mysql:host=' . $user_set_array['db_host'] . ';dbname=' . $user_set_array['db_name'] . '', $user_set_array['db_user'], $user_set_array['db_pass']); $db_insert = '';
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    if ($sql) { $db->exec($sql); $db_insert = 'inserted'; }
+    $db = null;
+} catch (PDOException $db_error) {
+    $db_insert = 'db-error' . PHP_EOL . $db_error->getMessage();
+}
 
 // generate terminal output and set sleep timer to get minimum a full second until next aircraft.json is ready to get fetched
 $runtime = (time() - $start_time);
