@@ -70,3 +70,18 @@ USE adsb;
 SELECT * FROM aircrafts;
 
 et voila :)
+
+p.s. for raspbian stretch the php-install line is:
+
+sudo apt-get install php7.0-common php7.0-cgi php7.0-mysql php7.0-sqlite php7.0-curl php7.0
+
+p.p.s. the new mariadb (aka mysql) that comes with stretch is somewhat stupid with the root password.
+these steps help to get back the old behavior:
+
+sudo mysql -u root -p (leave password empty)
+
+update mysql.user set password=password('geheim') where user='root';
+
+update mysql.user set plugin='' where user='root';
+
+flush privileges;
