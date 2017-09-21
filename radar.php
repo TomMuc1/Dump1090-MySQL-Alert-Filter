@@ -18,8 +18,8 @@ $user_set_array['alert_max_lon'] = 13.000000;    $user_set_array['alert_min_lon'
 // set lookup-interval default is 1 (must be integer between 1 - 900) this is the frequency the script runs and writes to database or looks for alerts
 $user_set_array['sleep'] = 1;
 
-// set to true and your google email-address if for alert-messages you want to use gmail instead own mailer.php file
-$user_set_array['gmail'] = false; $user_set_array['email_address'] = 'YOUR_EMAIL@gmail.com';
+// set your google email-address for alert-messages - if you want to use mailer.php instead gmail set method 'gmail' to 'webmail' or 'pushover' and a key according to mailer.php
+$user_set_array['alert_method'] = 'gmail'; $user_set_array['email_address'] = 'YOUR_EMAIL@gmail.com'; $user_set_array['secret_email_key'] = 'YOUR_USER_KEY';
 
 // set parameters for database connection
 $user_set_array['db_name'] = 'adsb'; $user_set_array['db_host'] = '127.0.0.1'; $user_set_array['db_user'] = 'USERNAME'; $user_set_array['db_pass'] = 'PASSWORD';
@@ -29,9 +29,6 @@ $user_set_array['url_json'] = 'http://127.0.0.1/dump1090/data/aircraft.json';
 
 // set path to your mailer.php file
 $user_set_array['url_mailer'] = 'http://YOUR_WEBSPACE.COM/mailer.php';
-
-// set a key (letters/numbers only) according to mailer.php
-$user_set_array['secret_email_key'] = 'YOUR_USER_KEY';
 
 // set the absolute limit of alert-messages (default is 1000) this script is allowed to send over its whole runtime
 $user_set_array['mailer_limit'] = 1000;
@@ -184,7 +181,7 @@ while (true) {
 
 		// send alert-message, set absolute limit for maximum number of messages and reset alert-message
 		if ($alert_message != '' && $sent_alert_messages < $user_set_array['mailer_limit']) {
-			if ($user_set_array['gmail']) {
+			if ($user_set_array['alert_method'] == 'gmail') {
 				$email = $user_set_array['email_address'];
 				$header  = 'MIME-Version: 1.0' . PHP_EOL;
 				$header .= 'Content-type: text/html; charset=iso-8859-1' . PHP_EOL;
@@ -192,8 +189,10 @@ while (true) {
 				$header .= 'Reply-To: ' . $user_set_array['email_address'] . PHP_EOL;
 				$header .= 'X-Mailer: PHP ' . phpversion();
 				mail($user_set_array['email_address'], urldecode($alert_message_subject), urldecode($alert_message_body), $header);
-			} else {
-				file_get_contents($user_set_array['url_mailer'] . '?' . $alert_message);
+			} elseif ($user_set_array['alert_method'] == 'pushover') {
+				file_get_contents($user_set_array['url_mailer'] . '?mode=pushover&' . $alert_message);
+			} elseif ($user_set_array['alert_method'] == 'webmail') {
+				file_get_contents($user_set_array['url_mailer'] . '?mode=webmail&' . $alert_message);
 			}
 			$sent_alert_messages++;
 			$alert_message = '';
@@ -203,12 +202,12 @@ while (true) {
 
 // write selected aircraft data to database
 try {
-        $db = new PDO('mysql:host=' . $user_set_array['db_host'] . ';dbname=' . $user_set_array['db_name'] . '', $user_set_array['db_user'], $user_set_array['db_pass']); $db_insert = '';
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        if ($sql) { $db->exec($sql); $db_insert = 'inserted'; }
-        $db = null;
+	$db = new PDO('mysql:host=' . $user_set_array['db_host'] . ';dbname=' . $user_set_array['db_name'] . '', $user_set_array['db_user'], $user_set_array['db_pass']); $db_insert = '';
+	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	if ($sql) { $db->exec($sql); $db_insert = 'inserted'; }
+	$db = null;
 } catch (PDOException $db_error) {
-        $db_insert = 'db-error' . PHP_EOL . $db_error->getMessage();
+	$db_insert = 'db-error' . PHP_EOL . $db_error->getMessage();
 }
 
 // generate terminal output and set sleep timer to get minimum a full second until next aircraft.json is ready to get fetched
