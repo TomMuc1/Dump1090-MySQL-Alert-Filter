@@ -114,7 +114,7 @@ while (true) {
 				$sql .= PHP_EOL;
 				$x++;
 			}
-		} elseif ($user_set_array['filter_mode_database']) {
+		} else if ($user_set_array['filter_mode_database']) {
 			if (($ac_altitude != '' && $ac_altitude < $user_set_array['max_alt'] && $ac_lat < $user_set_array['max_lat'] && $ac_lat > $user_set_array['min_lat'] && $ac_lon < $user_set_array['max_lon'] && $ac_lon > $user_set_array['min_lon']) || (func_wildcard_search($ac_hex, $hex_code_array, $user_set_array['filter_mode_wildcard']) || ($ac_flight != '' && func_wildcard_search($ac_flight, $flight_code_array, $user_set_array['filter_mode_wildcard'])))) {
 				$sql .= "INSERT INTO aircrafts VALUES (NULL, '" . date("Y-m-d G:i:s l", $ac_now) . "', '$ac_now', '$ac_hex', '$ac_flight', ";
 				$sql .= "'$ac_altitude', '$ac_lat', '$ac_lon', '$ac_track', '$ac_speed', '$ac_vert_rate', '$ac_seen_pos', '$ac_seen', ";
@@ -145,7 +145,7 @@ while (true) {
 					}
 				}
 			}
-		} elseif ($user_set_array['filter_mode_alert']) {
+		} else if ($user_set_array['filter_mode_alert']) {
 			if (($ac_altitude != '' && $ac_altitude < $user_set_array['alert_max_alt'] && $ac_lat < $user_set_array['alert_max_lat'] && $ac_lat > $user_set_array['alert_min_lat'] && $ac_lon < $user_set_array['alert_max_lon'] && $ac_lon > $user_set_array['alert_min_lon']) || (func_wildcard_search($ac_hex, $hex_code_array, $user_set_array['filter_mode_wildcard']) || ($ac_flight != '' && func_wildcard_search($ac_flight, $flight_code_array, $user_set_array['filter_mode_wildcard'])))) {
 				if (!array_key_exists($ac_hex, $alert_trigger_array)) {
 					$alert_message_subject = urlencode('### STRAFER-ALERT ### ' . $ac_flight  . ' ' . $ac_hex . ' : ' . $ac_lat . ' ' . $ac_lon . ' : ' . $ac_altitude . 'ft @ ' . date('Y-m-d G:i:s l', $ac_now));
@@ -189,9 +189,9 @@ while (true) {
 				$header .= 'Reply-To: ' . $user_set_array['email_address'] . PHP_EOL;
 				$header .= 'X-Mailer: PHP ' . phpversion();
 				mail($user_set_array['email_address'], urldecode($alert_message_subject), urldecode($alert_message_body), $header);
-			} elseif ($user_set_array['alert_method'] == 'pushover') {
+			} else if ($user_set_array['alert_method'] == 'pushover') {
 				file_get_contents($user_set_array['url_mailer'] . '?mode=pushover&' . $alert_message);
-			} elseif ($user_set_array['alert_method'] == 'webmail') {
+			} else if ($user_set_array['alert_method'] == 'webmail') {
 				file_get_contents($user_set_array['url_mailer'] . '?mode=webmail&' . $alert_message);
 			}
 			$sent_alert_messages++;
