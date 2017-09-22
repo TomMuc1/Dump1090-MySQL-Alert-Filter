@@ -25,7 +25,7 @@ if ($key == $user_key && $mode == 'webmail') {
 	$header .= 'Reply-To: ' . $user_email . PHP_EOL;
 	$header .= 'X-Mailer: PHP '. phpversion();
 	mail($user_email, $subject, $body, $header);
-} elseif ($key == $user_key && $mode == 'pushover') {
+} else if ($key == $user_key && $mode == 'pushover') {
 	curl_setopt_array($ch = curl_init(), array(
 		CURLOPT_URL => 'https://api.pushover.net/1/messages.json',
 		CURLOPT_POSTFIELDS => array('token' => $pushover_api_token, 'user' => $pushover_user_key, 'message' => $body, 'html' => '1'),
