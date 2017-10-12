@@ -215,7 +215,7 @@ $runtime = (time() - $start_time);
 $runtime_formatted = sprintf('%d days %02d:%02d:%02d', $runtime/60/60/24,($runtime/60/60)%24,($runtime/60)%60,$runtime%60);
 ($runtime > 0) ? $loop_clock = number_format(round(($i / $runtime),12),12) : $loop_clock = number_format(1, 12);
 $process_microtime = (round(1000000 * (microtime(true) - $start_loop_microtime)));
-print('process-time(us): ' . sprintf('%07d', $process_microtime) . ' - ' . $loop_clock . ' loops/s avg - since ' . $runtime_formatted . ' - run(s) ' . $i . ' -> ' . sprintf('%03d', $x) . ' dataset(s) => ' . $db_insert . PHP_EOL);
+print('upt(us): ' . sprintf('%07d', $process_microtime) . ' - ' . $loop_clock . ' loops/s avg - since ' . $runtime_formatted . ' - run(s) ' . $i . ' -> ' . sprintf('%03d', $x) . ' dataset(s) => ' . $db_insert . PHP_EOL);
 sleep($user_set_array['sleep']);
 $i++;
 
