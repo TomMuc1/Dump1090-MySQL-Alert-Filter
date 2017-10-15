@@ -5,7 +5,7 @@
 #ini_set('error_reporting', E_ALL);
 
 // below a sample create statement for database table
-// CREATE TABLE aircrafts (id INT NOT NULL AUTO_INCREMENT, date VARCHAR(100), now VARCHAR(100), hex VARCHAR(100), flight VARCHAR(100), altitude VARCHAR(100), lat VARCHAR(100), lon VARCHAR(100), track VARCHAR(100), speed VARCHAR(100), vert_rate VARCHAR(100), seen_pos VARCHAR(100), seen VARCHAR(100), rssi VARCHAR(100), messages VARCHAR(100), category VARCHAR(100), squawk VARCHAR(100), nucp VARCHAR(100), mlat VARCHAR(100), tisb VARCHAR(100), PRIMARY KEY (id))
+// CREATE TABLE aircrafts (id INT NOT NULL AUTO_INCREMENT, date VARCHAR(100), now VARCHAR(100), hex VARCHAR(100), flight VARCHAR(100), altitude VARCHAR(100), lat VARCHAR(100), lon VARCHAR(100), track VARCHAR(100), speed VARCHAR(100), vert_rate VARCHAR(100), seen_pos VARCHAR(100), seen VARCHAR(100), rssi VARCHAR(100), messages VARCHAR(100), category VARCHAR(100), squawk VARCHAR(100), nucp VARCHAR(100), mlat VARCHAR(100), tisb VARCHAR(100), rec_msg_sec VARCHAR(100), PRIMARY KEY (id))
 
 // set the rectangle and altitude to store aircraft-data in database - if your lon is negative be aware to use the right values for max and min
 $user_set_array['max_lat'] = 50.000000;    $user_set_array['min_lat'] = 46.000000;    $user_set_array['max_alt'] = 10000;
@@ -51,6 +51,7 @@ $user_set_array['time_zone'] = 'America/Chicago';
 
 
 
+// wildcard search function for external filter data
 function func_wildcard_search($code, $user_code_array, $wildcard_mode) {
 	$match = false;
 	$code = strtoupper($code);
@@ -77,15 +78,31 @@ while (true) {
 	$x = 0;
 	$sql = '';
 	$start_loop_microtime = microtime(true);
+
+	// fetch aircraft.json and read timestamp and overall message number
 	$json_data_array = json_decode(file_get_contents($user_set_array['url_json']),true);
+	isset($json_data_array['now']) ? $ac_now = $json_data_array['now'] : $ac_now = '';
+	isset($json_data_array['messages']) ? $ac_messages_total = $json_data_array['messages'] : $ac_messages_total = '';
+
+	// fetch and read external filter data files
 	if ($user_set_array['filter_mode_alert'] || $user_set_array['filter_mode_database']) {
 		$hex_code_array = explode(',', str_replace('%', '.', strtoupper(file_get_contents($user_set_array['hex_file_path']))));
 		$flight_code_array = explode(',', str_replace('%', '.', strtoupper(file_get_contents($user_set_array['flight_file_path']))));
 	}
 
-	// loop through aircraft.json file
+	// compute receiver message rate averaged over 30 seconds
+	$message_rate_array[$ac_messages_total] = $ac_now;
+	foreach ($message_rate_array as $key => $value) {
+		if (time() - $value > 30) {
+			unset($message_rate_array[$key]);
+		}
+	}
+	$delta_message_number = max(array_keys($message_rate_array)) - min(array_keys($message_rate_array));
+	$delta_message_time = max($message_rate_array) - min($message_rate_array);
+	$delta_message_time > 0 ? $message_rate = round($delta_message_number / $delta_message_time, '1') : $message_rate = 0;
+
+	// loop through aircraft section of aircraft.json file
 	foreach ($json_data_array['aircraft'] as $row) {
-		isset($json_data_array['now']) ? $ac_now = $json_data_array['now'] : $ac_now = '';
 		isset($row['hex']) ? $ac_hex = $row['hex'] : $ac_hex = '';
 		isset($row['flight']) ? $ac_flight = trim($row['flight']) : $ac_flight = '';
 		isset($row['altitude']) ? $ac_altitude = $row['altitude'] : $ac_altitude = '';
@@ -110,7 +127,7 @@ while (true) {
 			if (($ac_altitude != '' && $ac_altitude < $user_set_array['max_alt'] && $ac_lat < $user_set_array['max_lat'] && $ac_lat > $user_set_array['min_lat'] && $ac_lon < $user_set_array['max_lon'] && $ac_lon > $user_set_array['min_lon']) && (func_wildcard_search($ac_hex, $hex_code_array, $user_set_array['filter_mode_wildcard']) || ($ac_flight != '' && func_wildcard_search($ac_flight, $flight_code_array, $user_set_array['filter_mode_wildcard'])))) {
 				$sql .= "INSERT INTO aircrafts VALUES (NULL, '" . date("Y-m-d G:i:s l", $ac_now) . "', '$ac_now', '$ac_hex', '$ac_flight', ";
 				$sql .= "'$ac_altitude', '$ac_lat', '$ac_lon', '$ac_track', '$ac_speed', '$ac_vert_rate', '$ac_seen_pos', '$ac_seen', ";
-				$sql .= "'$ac_rssi', '$ac_messages', '$ac_category', '$ac_squawk', '$ac_nucp', '$ac_mlat', '$ac_tisb');";
+				$sql .= "'$ac_rssi', '$ac_messages', '$ac_category', '$ac_squawk', '$ac_nucp', '$ac_mlat', '$ac_tisb', '$message_rate');";
 				$sql .= PHP_EOL;
 				$x++;
 			}
@@ -118,7 +135,7 @@ while (true) {
 			if (($ac_altitude != '' && $ac_altitude < $user_set_array['max_alt'] && $ac_lat < $user_set_array['max_lat'] && $ac_lat > $user_set_array['min_lat'] && $ac_lon < $user_set_array['max_lon'] && $ac_lon > $user_set_array['min_lon']) || (func_wildcard_search($ac_hex, $hex_code_array, $user_set_array['filter_mode_wildcard']) || ($ac_flight != '' && func_wildcard_search($ac_flight, $flight_code_array, $user_set_array['filter_mode_wildcard'])))) {
 				$sql .= "INSERT INTO aircrafts VALUES (NULL, '" . date("Y-m-d G:i:s l", $ac_now) . "', '$ac_now', '$ac_hex', '$ac_flight', ";
 				$sql .= "'$ac_altitude', '$ac_lat', '$ac_lon', '$ac_track', '$ac_speed', '$ac_vert_rate', '$ac_seen_pos', '$ac_seen', ";
-				$sql .= "'$ac_rssi', '$ac_messages', '$ac_category', '$ac_squawk', '$ac_nucp', '$ac_mlat', '$ac_tisb');";
+				$sql .= "'$ac_rssi', '$ac_messages', '$ac_category', '$ac_squawk', '$ac_nucp', '$ac_mlat', '$ac_tisb', '$message_rate');";
 				$sql .= PHP_EOL;
 				$x++;
 			}
@@ -126,7 +143,7 @@ while (true) {
 			if ($ac_altitude != '' && $ac_altitude < $user_set_array['max_alt'] && $ac_lat < $user_set_array['max_lat'] && $ac_lat > $user_set_array['min_lat'] && $ac_lon < $user_set_array['max_lon'] && $ac_lon > $user_set_array['min_lon']) {
 				$sql .= "INSERT INTO aircrafts VALUES (NULL, '" . date("Y-m-d G:i:s l", $ac_now) . "', '$ac_now', '$ac_hex', '$ac_flight', ";
 				$sql .= "'$ac_altitude', '$ac_lat', '$ac_lon', '$ac_track', '$ac_speed', '$ac_vert_rate', '$ac_seen_pos', '$ac_seen', ";
-				$sql .= "'$ac_rssi', '$ac_messages', '$ac_category', '$ac_squawk', '$ac_nucp', '$ac_mlat', '$ac_tisb');";
+				$sql .= "'$ac_rssi', '$ac_messages', '$ac_category', '$ac_squawk', '$ac_nucp', '$ac_mlat', '$ac_tisb', '$message_rate');";
 				$sql .= PHP_EOL;
 				$x++;
 			}
@@ -179,7 +196,7 @@ while (true) {
 			}
 		}
 
-		// send alert-message, set absolute limit for maximum number of messages and reset alert-message
+		// send alert-message according to absolute limit for maximum number of messages and reset alert-message
 		if ($alert_message != '' && $sent_alert_messages < $user_set_array['mailer_limit']) {
 			if ($user_set_array['alert_method'] == 'gmail') {
 				$email = $user_set_array['email_address'];
@@ -200,7 +217,7 @@ while (true) {
 
 	}
 
-// write selected aircraft data to database
+// if db connection is ok write selected aircraft data to database
 try {
 	$db = new PDO('mysql:host=' . $user_set_array['db_host'] . ';dbname=' . $user_set_array['db_name'] . '', $user_set_array['db_user'], $user_set_array['db_pass']); $db_insert = '';
 	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -213,9 +230,9 @@ try {
 // generate terminal output and set sleep timer to get minimum a full second until next aircraft.json is ready to get fetched
 $runtime = (time() - $start_time);
 $runtime_formatted = sprintf('%d days %02d:%02d:%02d', $runtime/60/60/24,($runtime/60/60)%24,($runtime/60)%60,$runtime%60);
-($runtime > 0) ? $loop_clock = number_format(round(($i / $runtime),12),12) : $loop_clock = number_format(1, 12);
+($runtime > 0) ? $loop_clock = number_format(round(($i / $runtime),6),6) : $loop_clock = number_format(1, 6);
 $process_microtime = (round(1000000 * (microtime(true) - $start_loop_microtime)));
-print('upt(us): ' . sprintf('%07d', $process_microtime) . ' - ' . $loop_clock . ' loops/s avg - since ' . $runtime_formatted . ' - run(s) ' . $i . ' -> ' . sprintf('%03d', $x) . ' dataset(s) => ' . $db_insert . PHP_EOL);
+print('upt(us): ' . sprintf('%07d', $process_microtime) . ' - ' . $loop_clock . ' loops/s avg - since ' . $runtime_formatted . ' - run ' . $i . ' @ ' . number_format($message_rate, '1', ',', '.') . ' msg/s -> ' . sprintf('%03d', $x) . ' dataset(s) => ' . $db_insert . PHP_EOL);
 sleep($user_set_array['sleep']);
 $i++;
 
