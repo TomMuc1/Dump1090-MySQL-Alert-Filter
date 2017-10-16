@@ -91,14 +91,10 @@ while (true) {
 	}
 
 	// compute receiver message rate averaged over 30 seconds
-	$message_rate_array[$ac_messages_total] = $ac_now;
-	foreach ($message_rate_array as $key => $value) {
-		if (time() - $value > 30) {
-			unset($message_rate_array[$key]);
-		}
-	}
-	$delta_message_number = max(array_keys($message_rate_array)) - min(array_keys($message_rate_array));
-	$delta_message_time = max($message_rate_array) - min($message_rate_array);
+	$message_rate_array[] = array('messages' => $ac_messages_total, 'time' => $ac_now);
+	if (time() - $message_rate_array[0]['time'] > 30) array_shift($message_rate_array);
+	$delta_message_number = $message_rate_array[count($message_rate_array) - 1]['messages'] - $message_rate_array[0]['messages'];
+	$delta_message_time = $message_rate_array[count($message_rate_array) - 1]['time'] - $message_rate_array[0]['time'];
 	$delta_message_time > 0 ? $message_rate = round($delta_message_number / $delta_message_time, '1') : $message_rate = 0;
 
 	// loop through aircraft section of aircraft.json file
