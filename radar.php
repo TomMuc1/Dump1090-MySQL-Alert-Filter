@@ -80,6 +80,8 @@ $sent_alert_messages = 0;
 $alert_trigger_array = array();
 $start_time = time();
 date_default_timezone_set($user_set_array['time_zone']);
+
+// fetch receiver.json and read receiver latitude and longitude
 $json_receiver_location = json_decode(file_get_contents($user_set_array['url_json'] . 'receiver.json'), true);
 isset($json_receiver_location['lat']) ? $rec_lat = $json_receiver_location['lat'] : $rec_lat = 0;
 isset($json_receiver_location['lon']) ? $rec_lon = $json_receiver_location['lon'] : $rec_lon = 0;
