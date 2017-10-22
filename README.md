@@ -37,6 +37,7 @@ CREATE TABLE `aircrafts` (
   `now` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
   `hex` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
   `flight` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
+  `distance` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
   `altitude` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
   `lat` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
   `lon` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
@@ -52,12 +53,14 @@ CREATE TABLE `aircrafts` (
   `nucp` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
   `mlat` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
   `tisb` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
+  `rec_msg_sec` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11750 DEFAULT CHARSET=latin1 COLLATE=latin1_german1_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COLLATE=latin1_german1_ci;
+
 
 SHOW COLUMNS IN aircrafts;
 
-ctrl + z
+exit
 
 php radar.php
 
@@ -68,6 +71,8 @@ mysql -u root -p
 USE adsb;
 
 SELECT * FROM aircrafts;
+
+exit
 
 et voila :)
 
