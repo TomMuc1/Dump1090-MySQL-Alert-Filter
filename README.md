@@ -33,7 +33,7 @@ USE adsb;
 
 CREATE TABLE `aircrafts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `date` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
+  `message_date` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
   `now` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
   `hex` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
   `flight` varchar(100) COLLATE latin1_german1_ci DEFAULT NULL,
