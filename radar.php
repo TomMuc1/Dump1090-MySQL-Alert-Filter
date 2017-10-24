@@ -5,7 +5,7 @@
 #ini_set('error_reporting', E_ALL);
 
 // below a sample create statement for database table
-// CREATE TABLE aircrafts (id INT NOT NULL AUTO_INCREMENT, date VARCHAR(100), now VARCHAR(100), hex VARCHAR(100), flight VARCHAR(100), distance VARCHAR(100), altitude VARCHAR(100), lat VARCHAR(100), lon VARCHAR(100), track VARCHAR(100), speed VARCHAR(100), vert_rate VARCHAR(100), seen_pos VARCHAR(100), seen VARCHAR(100), rssi VARCHAR(100), messages VARCHAR(100), category VARCHAR(100), squawk VARCHAR(100), nucp VARCHAR(100), mlat VARCHAR(100), tisb VARCHAR(100), PRIMARY KEY (id))
+// CREATE TABLE aircrafts (id INT NOT NULL AUTO_INCREMENT, message_date VARCHAR(100), now VARCHAR(100), hex VARCHAR(100), flight VARCHAR(100), distance VARCHAR(100), altitude VARCHAR(100), lat VARCHAR(100), lon VARCHAR(100), track VARCHAR(100), speed VARCHAR(100), vert_rate VARCHAR(100), seen_pos VARCHAR(100), seen VARCHAR(100), rssi VARCHAR(100), messages VARCHAR(100), category VARCHAR(100), squawk VARCHAR(100), nucp VARCHAR(100), mlat VARCHAR(100), tisb VARCHAR(100), PRIMARY KEY (id))
 
 // set the rectangle and altitude to store aircraft-data in database - if your lon is negative be aware to use the right values for max and min
 $user_set_array['max_lat'] = 50.000000;    $user_set_array['min_lat'] = 46.000000;    $user_set_array['max_alt'] = 10000;
