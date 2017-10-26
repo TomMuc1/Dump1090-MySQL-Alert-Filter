@@ -6,7 +6,6 @@ $user_hex = 'YOUR_HEX';    $date_to_watch = 'YYYY-MM-DD%';    $speed_factor = 10
 $sql = "select * from aircrafts where hex='$user_hex' and message_date like '$date_to_watch' and squawk!='' and flight!='' and lat!='' and lon!='' and nucp!='' and seen_pos!='' and altitude!='' and vert_rate!='' and track!='' and speed!='' and category!='' and messages!='' and seen!='' and rssi!='' order by id asc";
 $db = new PDO('mysql:host=127.0.0.1;dbname=adsb', 'root', 'YOUR_PASSWORD');
 $stmt = $db->prepare($sql);
-
 $stmt->execute();
 $select = $stmt->fetchAll();
 
