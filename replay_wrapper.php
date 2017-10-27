@@ -13,15 +13,15 @@ $i = 0;
 
 foreach  ($select as $result) {
 
-$aircraft_json = '{ "now" : ' . $result['now'] . ',' . PHP_EOL;
-$aircraft_json .= '  "messages" : 60296972,' . PHP_EOL;
-$aircraft_json .= '  "aircraft" : [' . PHP_EOL;
-$aircraft_json .= '    {"hex":"' . $result['hex'] . '","squawk":"' . $result['squawk'] . '","flight":"' . $result['flight'] . '","lat":' . $result['lat'] . ',"lon":' . $result['lon'] . ',"nucp":' . $result['nucp'] . ',"seen_pos":' . $result['seen_pos'] . ',"altitude":' . $result['altitude'] . ',"vert_rate":' . $result['vert_rate'] . ',"track":' . $result['track'] . ',"speed":' . $result['speed'] . ',"category":"' . $result['category'] . '","mlat":"","tisb":"","messages":' . $result['messages'] . ',"seen":' . $result['seen'] . ',"rssi":' . $result['rssi'] . '}' . PHP_EOL;
-$aircraft_json .= '  ]' . PHP_EOL;
-$aircraft_json .= '}' . PHP_EOL;
-$i++;
+	$aircraft_json = '{ "now" : ' . $result['now'] . ',' . PHP_EOL;
+	$aircraft_json .= '  "messages" : 60296972,' . PHP_EOL;
+	$aircraft_json .= '  "aircraft" : [' . PHP_EOL;
+	$aircraft_json .= '    {"hex":"' . $result['hex'] . '","squawk":"' . $result['squawk'] . '","flight":"' . $result['flight'] . '","lat":' . $result['lat'] . ',"lon":' . $result['lon'] . ',"nucp":' . $result['nucp'] . ',"seen_pos":' . $result['seen_pos'] . ',"altitude":' . $result['altitude'] . ',"vert_rate":' . $result['vert_rate'] . ',"track":' . $result['track'] . ',"speed":' . $result['speed'] . ',"category":"' . $result['category'] . '","mlat":"","tisb":"","messages":' . $result['messages'] . ',"seen":' . $result['seen'] . ',"rssi":' . $result['rssi'] . '}' . PHP_EOL;
+	$aircraft_json .= '  ]' . PHP_EOL;
+	$aircraft_json .= '}' . PHP_EOL;
+	$i++;
 
-if ($i == $speed_factor) { file_put_contents('/YOUR_PATH/data/aircraft.json', $aircraft_json, LOCK_EX); $i = 0; sleep(1); }
+	if ($i == $speed_factor) { file_put_contents('/YOUR_PATH/data/aircraft.json', $aircraft_json, LOCK_EX); $i = 0; sleep(1); }
 
 }
 
