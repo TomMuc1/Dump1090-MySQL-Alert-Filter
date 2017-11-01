@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 #phpinfo();
@@ -5,7 +6,7 @@
 #ini_set('error_reporting', E_ALL);
 
 // below a sample create statement for database table
-// CREATE TABLE aircrafts (id INT NOT NULL AUTO_INCREMENT, message_date VARCHAR(100), now VARCHAR(100), hex VARCHAR(100), flight VARCHAR(100), distance VARCHAR(100), altitude VARCHAR(100), lat VARCHAR(100), lon VARCHAR(100), track VARCHAR(100), speed VARCHAR(100), vert_rate VARCHAR(100), seen_pos VARCHAR(100), seen VARCHAR(100), rssi VARCHAR(100), messages VARCHAR(100), category VARCHAR(100), squawk VARCHAR(100), nucp VARCHAR(100), mlat VARCHAR(100), tisb VARCHAR(100), PRIMARY KEY (id))
+// CREATE TABLE aircrafts (id INT NOT NULL AUTO_INCREMENT, message_date VARCHAR(100), now VARCHAR(100), hex VARCHAR(100), flight VARCHAR(100), distance VARCHAR(100), altitude VARCHAR(100), lat VARCHAR(100), lon VARCHAR(100), track VARCHAR(100), speed VARCHAR(100), vert_rate VARCHAR(100), seen_pos VARCHAR(100), seen VARCHAR(100), rssi VARCHAR(100), messages VARCHAR(100), category VARCHAR(100), squawk VARCHAR(100), nucp VARCHAR(100), mlat VARCHAR(100), tisb VARCHAR(100), rec_msg_sec VARCHAR(100), PRIMARY KEY (id))
 
 // set the rectangle and altitude to store aircraft-data in database - if your lon is negative be aware to use the right values for max and min
 $user_set_array['max_lat'] = 50.000000;    $user_set_array['min_lat'] = 46.000000;    $user_set_array['max_alt'] = 10000;
@@ -227,24 +228,24 @@ while (true) {
 
 	}
 
-// if db connection is ok write selected aircraft data to database
-try {
-	$db = new PDO('mysql:host=' . $user_set_array['db_host'] . ';dbname=' . $user_set_array['db_name'] . '', $user_set_array['db_user'], $user_set_array['db_pass']); $db_insert = '';
-	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	if ($sql) { $db->exec($sql); $db_insert = 'inserted'; }
-	$db = null;
-} catch (PDOException $db_error) {
-	$db_insert = 'db-error' . PHP_EOL . $db_error->getMessage();
-}
-
-// generate terminal output and set sleep timer to get minimum a full second until next aircraft.json is ready to get fetched
-$runtime = (time() - $start_time);
-$runtime_formatted = sprintf('%d days %02d:%02d:%02d', $runtime/60/60/24,($runtime/60/60)%24,($runtime/60)%60,$runtime%60);
-($runtime > 0) ? $loop_clock = number_format(round(($i / $runtime),6),6) : $loop_clock = number_format(1, 6);
-$process_microtime = (round(1000000 * (microtime(true) - $start_loop_microtime)));
-print('upt(us): ' . sprintf('%07d', $process_microtime) . ' - ' . $loop_clock . ' loops/s avg - since ' . $runtime_formatted . ' - run ' . $i . ' @ ' . number_format($message_rate, '1', ',', '.') . ' msg/s -> ' . sprintf('%03d', $x) . ' dataset(s) => ' . $db_insert . PHP_EOL);
-sleep($user_set_array['sleep']);
-$i++;
+    // if db connection is ok write selected aircraft data to database
+    try {
+    	$db = new PDO('mysql:host=' . $user_set_array['db_host'] . ';dbname=' . $user_set_array['db_name'] . '', $user_set_array['db_user'], $user_set_array['db_pass']); $db_insert = '';
+    	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    	if ($sql) { $db->exec($sql); $db_insert = 'inserted'; }
+    	$db = null;
+    } catch (PDOException $db_error) {
+    	$db_insert = 'db-error' . PHP_EOL . $db_error->getMessage();
+    }
+    
+    // generate terminal output and set sleep timer to get minimum a full second until next aircraft.json is ready to get fetched
+    $runtime = (time() - $start_time);
+    $runtime_formatted = sprintf('%d days %02d:%02d:%02d', $runtime/60/60/24,($runtime/60/60)%24,($runtime/60)%60,$runtime%60);
+    ($runtime > 0) ? $loop_clock = number_format(round(($i / $runtime),6),6) : $loop_clock = number_format(1, 6);
+    $process_microtime = (round(1000000 * (microtime(true) - $start_loop_microtime)));
+    print('upt(us): ' . sprintf('%07d', $process_microtime) . ' - ' . $loop_clock . ' loops/s avg - since ' . $runtime_formatted . ' - run ' . $i . ' @ ' . number_format($message_rate, '1', ',', '.') . ' msg/s -> ' . sprintf('%03d', $x) . ' dataset(s) => ' . $db_insert . PHP_EOL);
+    sleep($user_set_array['sleep']);
+    $i++;
 
 }
 
