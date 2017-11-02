@@ -33,7 +33,7 @@ save and exit nano ctrl+x -> ctrl+y -> enter
     sudo systemctl start radar.service
     sudo systemctl status radar.service
     
-**starting with raspbian jessie or stretch install with dump1090:**
+**starting with raspbian jessie or stretch install with dump1090-mutability:**
     
     sudo apt-get update
     sudo apt-get install sendmail
