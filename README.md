@@ -6,6 +6,8 @@ Writes Dump1090-mutability data to MySql database and e-mail/pushover alerts on 
 
 one line sample database output using an inner join to basestation.sqb:
 
+    select * from aircrafts inner join basestation on aircrafts.hex = basestation.ModeS where aircrafts.hex = '3ddc68'
+
     id          message_date                    now             hex     flight  distance    altitude    lat         lon         track   speed   vert_rate   seen_pos    seen    rssi    messages    category    squawk  nucp    mlat    tisb    rec_msg_sec AircraftID  ModeS   ModeSCountry    Country Registration    Status  Manufacturer        ICAOTypeCode    Type                    SerialNo    RegisteredOwners    OperatorFlagCode
     13520524    2017-11-22 12:12:57 Wednesday   1511349177.8    3ddc68  CHX87   24.3        2875        48.395966   11.484023   4       117     0           11.8        1.6     -22.2   2128        A7          0020    7                       1281.9      102138      3DDC68  Germany D       D-HDSI  A                       Airbus Helicopters  EC45            MBB-BK 117 D-2 (H145)   20056       HDM Luftrettung     EC45
     13520449    2017-11-22 12:12:43 Wednesday   1511349163.4    3ddc68  CHX87   24.2        2875        48.394363   11.483812   5       115     0           0.4         0.4     -21.8   2103        A7          0020    7                       1287        102138      3DDC68  Germany D       D-HDSI  A                       Airbus Helicopters  EC45            MBB-BK 117 D-2 (H145)   20056       HDM Luftrettung     EC45
