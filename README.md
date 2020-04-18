@@ -1,10 +1,11 @@
 ### Dump1090-MySQL-Alert-Filter
 
-Writes Dump1090-mutability data to MySql database and e-mail/pushover alerts on special events. you can set how often the script writes to database and looks for alert condition. you can specify the area (lat/lon/alt) to be observed and filter for special hex and/or flight numbers. You can globally switch to wildcard-search and then use % as wildcard for missing characters in hex- or flight-text-file. in addition you can set hex/flight filter to operate only within lat/lon/alt limit or within whole range of site
+#### Background
+This is a set of php scripts which write Dump1090-mutability data to a local MySQL database. It can send e-mail or push notifications for special events, such as all planes within a geofence you prescribe, or certain planes identified either by hex code or tail number. You can set how often the script looks for an alert condition and writes to the database. The geofenced location is specified by latitude, longitude, and altitude. Further filtering can be done by listing hex codes and/or tail numbers. You can globally switch to wildcard-search and use % as a wildcard for missing characters in hex- or flight-text-file. In addition you can set the hex/flight filter to operate only within lat/lon/alt limit or for all locations received.
 
 ![Alt text](screen.png?raw=true "Script running on RaspberryPi")
 
-one line sample database output using an inner join to basestation.sqb:
+Below is an example of a one line sample database query using an inner join to basestation.sqb:
 
     select * from aircrafts inner join basestation on aircrafts.hex = basestation.ModeS where aircrafts.hex = '3ddc68'
 
@@ -24,14 +25,28 @@ one line sample database output using an inner join to basestation.sqb:
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
                                                                                                                                                                                                                                                                                                                                                                                                                                         
                                                                                                                                                                                                                                                                                                                                                                                                                                
-**=> do the needed settings at top of radar.php - then place the script e.g. in /home/pi/ and follow below instructions**
+#### Instructions
+##### Edit the upper lines of the radar.php file
 
-**setup script system service:**
+Items required to be entered include:
+
+1. For email notifications, provide the maximum and minimum geographic coordinates and maximum altitude of interest. If your longitude is negative, use the correct magnitude, for instance, max=-121.0000 min=-110.0000. Enter the maximum altitude in feet. 
+2. Provide similar information for the push notification option. 
+3. Provide the default look-up interval in seconds.
+4. Provide either your Gmail information, or if using webmail or pushover.net, see further instructions in mailer.php. No key is required for use of Gmail.
+5. Set the parameters needed for your local database connection.
+6. Set the paths to the aircraft.json, mailer.php, hex_code_array, and flight_code_array files
+7. Set the logic for alerts.
+8. Set the local time zone, see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+   
+Place the radar.php script in /home/pi/ 
+
+##### Setup script system service:
 
     sudo chmod 755 /home/pi/radar.php
     sudo nano /etc/systemd/system/radar.service
 
--> in nano insert the following lines
+    In nano insert the following lines:
 
     [Unit]
     Description=radar.php
@@ -46,14 +61,14 @@ one line sample database output using an inner join to basestation.sqb:
     [Install]
     WantedBy=multi-user.target
 
-save and exit nano ctrl+x -> ctrl+y -> enter
+    Save and exit nano using ctrl+x -> ctrl+y -> enter
 
     sudo chmod 644 /etc/systemd/system/radar.service
     sudo systemctl enable radar.service
     sudo systemctl start radar.service
     sudo systemctl status radar.service
     
-**starting with raspbian jessie or stretch install with dump1090-mutability:**
+##### Starting with raspbian jessie or stretch install with dump1090-mutability (see below for Raspbian Stretch):
     
     sudo apt-get update
     sudo apt-get install sendmail
@@ -64,6 +79,8 @@ save and exit nano ctrl+x -> ctrl+y -> enter
     sudo apt-get install mysql-server mysql-client
     
     sudo shutdown -r now
+    
+    restart the device
     
     mysql -u root -p
     
@@ -102,8 +119,8 @@ save and exit nano ctrl+x -> ctrl+y -> enter
     exit
     
     php radar.php
-    
-    run the script for some seconds/minutes until it says xxx inserted then stop script with ctrl + z
+
+##### Run the script for some seconds/minutes until it says xxx inserted then stop script with ctrl + z
     
     mysql -u root -p
     
@@ -113,10 +130,11 @@ save and exit nano ctrl+x -> ctrl+y -> enter
     
     exit
     
-    for raspbian stretch the php-install line is:
+##### For Raspbian Stretch 
+The php-install line is:
     sudo apt-get install php7.0-common php7.0-cgi php7.0-mysql php7.0-sqlite php7.0-curl php7.0
     
-the new mariadb (aka mysql) that comes with stretch is somewhat stupid with the root password. these steps help to get back the old behavior:
+The new mariadb (aka mysql) that comes with stretch is somewhat stupid with the root password. these steps help to get back the old behavior:
     
     sudo mysql -u root -p (leave password empty)
     update mysql.user set password=password('YOUR_DB_PASSWORD') where user='root';
