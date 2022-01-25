@@ -116,11 +116,14 @@ while (true) {
 		isset($row['hex']) ? $ac_hex = $row['hex'] : $ac_hex = '';
 		isset($row['flight']) ? $ac_flight = trim($row['flight']) : $ac_flight = '';
 		isset($row['altitude']) ? $ac_altitude = $row['altitude'] : $ac_altitude = '';
+		isset($row['alt_baro']) ? $ac_altitude = $row['alt_baro'] : true;
 		isset($row['lat']) ? $ac_lat = $row['lat'] : $ac_lat = '';
 		isset($row['lon']) ? $ac_lon = $row['lon'] : $ac_lon = '';
 		isset($row['track']) ? $ac_track = $row['track'] : $ac_track = '';
 		isset($row['speed']) ? $ac_speed = $row['speed'] : $ac_speed = '';
+		isset($row['gs']) ? $ac_speed = $row['gs'] : true;
 		isset($row['vert_rate']) ? $ac_vert_rate = $row['vert_rate'] : $ac_vert_rate = '';
+		isset($row['baro_rate']) ? $ac_vert_rate = $row['baro_rate'] : true;
 		isset($row['seen_pos']) ? $ac_seen_pos = $row['seen_pos'] : $ac_seen_pos = '';
 		isset($row['seen']) ? $ac_seen = $row['seen'] : $ac_seen = '';
 		isset($row['rssi']) ? $ac_rssi = $row['rssi'] : $ac_rssi = '';
